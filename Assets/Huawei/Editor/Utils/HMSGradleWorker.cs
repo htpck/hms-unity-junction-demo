@@ -22,7 +22,7 @@ namespace HmsPlugin
             gradleSettings = new Dictionary<string, string[]>()
             {
                 { AccountToggleEditor.AccountKitEnabled, new string[]{ "com.huawei.hms:hwid:6.4.0.301" } },
-                { AdsToggleEditor.AdsKitEnabled, new string[]{ "com.huawei.hms:ads-lite:13.4.54.300", "com.huawei.hms:ads-consent:3.4.54.300", "com.huawei.hms:ads-identifier:3.4.39.302", "com.huawei.hms:ads-installreferrer:3.4.39.302" } },
+                { AdsToggleEditor.AdsKitEnabled, new string[]{ "com.huawei.hms:ads-lite:13.4.58.301", "com.huawei.hms:ads-consent:3.4.58.304", "com.huawei.hms:ads-identifier:3.4.39.302", "com.huawei.hms:ads-installreferrer:3.4.39.302" } },
                 { AnalyticsToggleEditor.AnalyticsKitEnabled, new string[] { "com.huawei.hms:hianalytics:6.4.1.302" } },
                 { CrashToggleEditor.CrashKitEnabled, new string[] { "com.huawei.agconnect:agconnect-crash:1.6.5.300" } },
                 { GameServiceToggleEditor.GameServiceEnabled, new string[] { "com.huawei.hms:game:6.2.0.301" } },
@@ -59,11 +59,7 @@ namespace HmsPlugin
         private void CreateMainGradleFile(string[] gradleConfigs)
         {
 #if UNITY_2019_3_OR_NEWER
-            var path = Application.dataPath + "/Huawei/Plugins/Android/hmsMainTemplate.gradle";
-            if (File.Exists(path))
-                File.Delete(path);
-
-            using (var file = File.CreateText(path))
+            using (var file = File.CreateText(Application.dataPath + "/Huawei/Plugins/Android/hmsMainTemplate.gradle"))
             {
                 file.Write("dependencies {\n\t");
                 for (int i = 0; i < gradleConfigs.Length; i++)
@@ -104,13 +100,12 @@ namespace HmsPlugin
 
         private void CreateLauncherGradleFile(string[] gradleConfigs)
         {
-            var path = Application.dataPath + "/Huawei/Plugins/Android/hmsLauncherTemplate.gradle";
-            if (File.Exists(path))
-                File.Delete(path);
-
-            using (var file = File.CreateText(path))
+            using (var file = File.CreateText(Application.dataPath + "/Huawei/Plugins/Android/hmsLauncherTemplate.gradle"))
             {
                 file.Write("apply plugin: 'com.huawei.agconnect'\n\n");
+
+                #region Dependencies
+
                 file.Write("dependencies {\n\t");
 
                 for (int i = 0; i < gradleConfigs.Length; i++)
@@ -119,16 +114,23 @@ namespace HmsPlugin
                 }
 
                 file.Write("\n}\n");
+
+                #endregion
+
+                file.Write("android {\n");
+                file.Write("packagingOptions {\n\t");
+                file.Write("pickFirst \"okhttp3/internal/publicsuffix/publicsuffixes.gz\"");
+                file.Write("\n}\n");
+                file.Write("}\n");
+
+
+
             }
         }
 
         private void BaseProjectGradleFile()
         {
-            var path = Application.dataPath + "/Huawei/Plugins/Android/hmsBaseProjectTemplate.gradle";
-            if (File.Exists(path))
-                File.Delete(path);
-
-            using (var file = File.CreateText(path))
+            using (var file = File.CreateText(Application.dataPath + "/Huawei/Plugins/Android/hmsBaseProjectTemplate.gradle"))
             {
                 file.Write("allprojects {\n\t");
                 file.Write("buildscript {\n\t\t");

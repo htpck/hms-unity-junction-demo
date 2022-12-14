@@ -1,21 +1,24 @@
 
-using HmsPlugin;
-
-using HuaweiMobileServices.IAP;
 
 using UnityEngine;
+
+#if UNITY_PURCHASING
+using UnityEngine.Purchasing;
+#endif
 using UnityEngine.UI;
 
-public class IAPDemoUIView : MonoBehaviour
+
+
+
+public class UnityIAPDemoUIView : MonoBehaviour
 {
+#if UNITY_PURCHASING
 
     private Button Btn_ItemCoins100;
     private Button Btn_ItemCoins1000;
     private Button Btn_ItemRemoveAds;
     private Button Btn_ItemPremium;
     private Button Btn_SignIn;
-    private Button Btn_ManageSubscriptions;
-    private Button Btn_EditSubscriptions;
 
     private Text Txt_Log;
 
@@ -30,9 +33,6 @@ public class IAPDemoUIView : MonoBehaviour
         Btn_ItemPremium = GameObject.Find("ItemBuyButtonPremium").GetComponent<Button>();
         Btn_SignIn = GameObject.Find("LoginButton").GetComponent<Button>();
 
-        Btn_ManageSubscriptions = GameObject.Find("ManageSubscription").GetComponent<Button>();
-        Btn_EditSubscriptions = GameObject.Find("EditSubscription").GetComponent<Button>();
-
         Txt_Log = GameObject.Find("StatusText").GetComponent<Text>();
     }
 
@@ -44,10 +44,7 @@ public class IAPDemoUIView : MonoBehaviour
         Btn_ItemPremium.onClick.AddListener(ButtonClick_BuyItemPremium);
         Btn_SignIn.onClick.AddListener(ButtonClick_BuySignIn);
 
-        Btn_ManageSubscriptions.onClick.AddListener(OpenSubscriptionManagementScreen);
-        Btn_EditSubscriptions.onClick.AddListener(OpenSubscriptionEditingScreen);
-
-        IapDemoManager.IAPLog += OnIAPLog;
+        UnityIapDemoManager.IAPLog += OnIAPLog;
     }
 
     private void OnDisable()
@@ -58,10 +55,7 @@ public class IAPDemoUIView : MonoBehaviour
         Btn_ItemPremium.onClick.RemoveListener(ButtonClick_BuyItemPremium);
         Btn_SignIn.onClick.RemoveListener(ButtonClick_BuySignIn);
 
-        Btn_ManageSubscriptions.onClick.RemoveListener(OpenSubscriptionManagementScreen);
-        Btn_EditSubscriptions.onClick.RemoveListener(OpenSubscriptionEditingScreen);
-
-        IapDemoManager.IAPLog -= OnIAPLog;
+        UnityIapDemoManager.IAPLog -= OnIAPLog;
     }
 
     #endregion
@@ -79,39 +73,30 @@ public class IAPDemoUIView : MonoBehaviour
 
     private void ButtonClick_BuyItemCoins100()
     {
-        IapDemoManager.Instance.BuyProduct("coins100");
+        UnityIapDemoManager.Instance.BuyProduct("coins100", ProductType.Consumable);
     }
 
     private void ButtonClick_BuyItemCoins1000()
     {
-        IapDemoManager.Instance.BuyProduct("coins1000");
+        UnityIapDemoManager.Instance.BuyProduct("coins1000", ProductType.Consumable);
     }
 
     private void ButtonClick_BuyItemRemoveAds()
     {
-        IapDemoManager.Instance.BuyProduct("removeAds");
+        UnityIapDemoManager.Instance.BuyProduct("removeAds", ProductType.NonConsumable);
     }
 
     private void ButtonClick_BuyItemPremium()
     {
-        IapDemoManager.Instance.BuyProduct("premium");
+        UnityIapDemoManager.Instance.BuyProduct("premium", ProductType.Subscription);
     }
 
     private void ButtonClick_BuySignIn()
     {
-        IapDemoManager.Instance.SignIn();
-    }
-
-    private void OpenSubscriptionEditingScreen()
-    {
-        HMSIAPManager.Instance.RedirectingtoSubscriptionEditingScreen("premium");
-    }
-
-    private void OpenSubscriptionManagementScreen()
-    {
-        HMSIAPManager.Instance.RedirectingtoSubscriptionManagementScreen("premium");
+        //UnityIapDemoManager.Instance.SignIn();
     }
 
     #endregion
-
+#endif
 }
+
